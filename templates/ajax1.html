@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>ajax</title>
+    <link rel="stylesheet" href="/static/common.css">
+</head>
+<body>
+<div>
+<table>
+    <thead>
+    <tr>
+        <th>name</th>
+        <th>age</th>
+        <th>gender</th>
+        <th>school</th>
+        <th>option</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for item in user_list %}
+        <tr>
+            <td>{{ item.name }}</td>
+            <td>{{ item.age }}</td>
+            <td>{{ item.gender }}</td>
+            <td>{{ item.school.s_name }}</td>
+            <td><a>del</a>|<a>edit</a></td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+
+</div>
+{#modals#}
+<div class="hide" id="shadow"></div>
+<div class="hide modal">
+    <form action="ajax1.html" method="post">
+        <p><a class="danger">{{ err_msg }}</a></p>
+        <p>name: <input type="text" name="name" id="name"></p>
+        <p>age: <input type="text" name="age" id="age"></p>
+        <p>gender: <input type="text" name="gender" id="gender"></p>
+        <p>school:
+            <select>
+                <option></option>
+            </select>
+        </p>
+        <p><input type="submit" value="submit"></p>
+        <p><input id="ajax_submit" type="button" value="ajax"></p>
+    </form>
+</div>
+<script src="/static/jQuery3.4.1.js"></script>
+<script src="/static/common.js"></script>
+</body>
+</html>
