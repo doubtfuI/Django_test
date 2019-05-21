@@ -24,6 +24,14 @@
     z-index: 101;
 }
 
+.modal_trigger {
+    cursor: pointer;
+}
+
 table, td, tr{
     border: 1px solid black;
+}
+
+.danger {
+    color: red
 }
