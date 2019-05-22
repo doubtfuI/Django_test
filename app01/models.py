@@ -10,3 +10,8 @@ class User(models.Model):
 
 class School(models.Model):
     s_name = models.CharField(max_length=32, null=False)
+
+
+class Course(models.Model):
+    c_name = models.CharField(max_length=32, null=False)
+    r = models.ManyToManyField('User')

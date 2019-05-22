@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>ajax</title>
+    <link rel="stylesheet" href="/static/common.css">
+</head>
+<body>
+<div>
+    <table>
+        <thead>
+        <tr>
+            <th>name</th>
+            <th>student list</th>
+            <th>option</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for item in choose_list %}
+            <tr>
+                <td>{{ item.c_name }}</td>
+                <td>
+                    {% for i in item.r.all %}
+                        {{ i.name }}
+                    {% endfor %}
+                </td>
+                <td><a class="del_modal_trigger del_content">del</a>|<a class="modal_trigger edit_content">edit</a></td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    <input type="button" value="add" class="modal_trigger add_content">
+
+</div>
+{#modals#}
+<div class="hide" id="shadow"></div>
+<div class="hide modal">
+    <form id="add_edit_form" action="m2m.html" method="post">
+        <p><a class="danger">{{ err_msg }}</a></p>
+        <p>course:
+            <select id="course">
+                {% for item in course_list %}
+                    <option value="{{ item.c_name }}">{{ item.c_name }}</option>
+                {% endfor %}
+            </select>
+        </p>
+        <p>student:
+            <select id="student" multiple>
+                {% for item in student_list %}
+                    <option value="{{ item.name }}">{{ item.name }}</option>
+                {% endfor %}
+            </select>
+        </p>
+        <input type="text" name="id" id="u_id" class="hide">
+        <input type="text" name="method" id="submit_method" class="hide">
+        <p><input id="ajax_submit" type="button" value="ajax_submit"></p>
+        <p><input class="modal_hider" type="button" value="cancel"></p>
+    </form>
+</div>
+<div class="hide del_modal">
+    <h1>确认要删除吗？</h1>
+    <form action="m2m.html" method="post">
+        <input type="text" name="id" id="del_id" class="hide"/>
+        <p><input type="button" value="del" id="del_submit"/></p>
+        <p><input class="del_modal_hider" type="button" value="cancel"></p>
+    </form>
+</div>
+<script src="/static/jQuery3.4.1.js"></script>
+<script src="/static/m2m.js"></script>
+</body>
+</html>

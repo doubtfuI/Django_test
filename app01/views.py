@@ -4,6 +4,7 @@ from app01 import models
 
 URL = {'index': 'index.html',
        'ajax1': 'ajax1.html',
+       'm2m': 'm2m.html',
        'option': 'option.html',
        'table': 'dict_in_table.html',
        }
@@ -31,7 +32,11 @@ def ajax1(request):
         print(school)
         method = request.POST.get('method', None)
         print(method)
-        if len(name) < 1:
+        if method == 'del':
+            u_id = request.POST.get('id', None)
+            models.User.objects.filter(id=u_id).delete()
+            return HttpResponse('Done')
+        elif len(name) < 1:
             return HttpResponse('please input the name')
         elif len(age) < 1:
             return HttpResponse('please input the age')
@@ -40,7 +45,9 @@ def ajax1(request):
         elif len(school) < 1:
             return HttpResponse('please choose the school')
         elif method == 'add':
-            pass
+            school_obj = models.School.objects.filter(s_name=school).first()
+            models.User.objects.create(name=name, age=age, gender=gender, school=school_obj)
+            return HttpResponse('Done')
         elif method == 'edit':
             u_id = request.POST.get('id', None)
             school_obj = models.School.objects.filter(s_name=school).first()
@@ -48,6 +55,16 @@ def ajax1(request):
             return HttpResponse('Done')
 
 
+# Django orm 多对多操作
+def m2m(request):
+    choose_list = models.Course.objects.all()
+    student_list = models.User.objects.all()
+    course_list = models.Course.objects.all()
+    return render(request, 'm2m.html', {'choose_list': choose_list, 'student_list': student_list,
+                                        'course_list': course_list})
+
+
+# 获取数据库数据方法
 def dict_in_table(request):
     v1 = models.User.objects.all()
     # 对象列表
@@ -70,10 +87,26 @@ def dict_in_table(request):
 # 数据库添加数据
 def option(request):
     if request.method == 'GET':
-        return HttpResponse('done')
+        # 为id=1的课程添加学生
+        # obj1 = models.Course.objects.filter(id=1).first()
+        # obj1.r.add(3, 4, 5, 6)
+        # obj2 = models.Course.objects.filter(id=2).first()
+        # obj2.r.add(3, 5, 6)
+        # obj3 = models.Course.objects.filter(id=3).first()
+        # obj3.r.add(6)
+        # obj4 = models.Course.objects.filter(id=4).first()
+        # obj4.r.add(4, 5)
+        # 添加课程
+        # models.Course.objects.create(c_name='Chinese')
+        # models.Course.objects.create(c_name='math')
+        # models.Course.objects.create(c_name='English')
+        # models.Course.objects.create(c_name='history')
+        # 添加学校
         # models.School.objects.create(s_name='A school')
         # models.School.objects.create(s_name='B school')
+        # 添加学生
         # models.User.objects.create(name='bob', age=3, gender='M', school_id=1)
         # models.User.objects.create(name='jack', age=4, gender='M', school_id=2)
         # models.User.objects.create(name='alice', age=3, gender='F', school_id=1)
         # models.User.objects.create(name='lucy', age=5, gender='F', school_id=2)
+        return HttpResponse('done')
