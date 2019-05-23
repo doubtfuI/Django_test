@@ -7,6 +7,10 @@ URL = {'index': 'index.html',
        'm2m': 'm2m.html',
        'option': 'option.html',
        'table': 'dict_in_table.html',
+
+       'block': 'block-1.html',
+       'simple tag': 'simple_tag.html',
+       'page': 'page-1.html',
        }
 
 
@@ -21,17 +25,11 @@ def ajax1(request):
     if request.method == 'GET':
         return render(request, 'ajax1.html', {'url': URL, 'user_list': user, 'school_list': school})
     elif request.method == 'POST':
-        print('sth post')
         name = request.POST.get('name', None)
-        print(name)
         age = request.POST.get('age', None)
-        print(age)
         gender = request.POST.get('gender', None)
-        print(gender)
         school = request.POST.get('school', None)
-        print(school)
         method = request.POST.get('method', None)
-        print(method)
         if method == 'del':
             u_id = request.POST.get('id', None)
             models.User.objects.filter(id=u_id).delete()
@@ -55,13 +53,84 @@ def ajax1(request):
             return HttpResponse('Done')
 
 
-# Django orm 多对多操作
+# Django orm 多对多操作(ajax传列表，获取JSON)
 def m2m(request):
-    choose_list = models.Course.objects.all()
-    student_list = models.User.objects.all()
-    course_list = models.Course.objects.all()
-    return render(request, 'm2m.html', {'choose_list': choose_list, 'student_list': student_list,
-                                        'course_list': course_list})
+    if request.method == 'GET':
+        choose_list = models.Course.objects.all()
+        student_list = models.User.objects.all()
+        return render(request, 'm2m.html', {'choose_list': choose_list, 'student_list': student_list})
+    elif request.method == 'POST':
+        c_id = request.POST.get('c_id', None)
+        student = request.POST.getlist('student', None)
+        course_name = request.POST.get('course', None)
+        method = request.POST.get('method', None)
+        if method == 'del':
+            obj = models.Course.objects.filter(id=c_id).first()
+            obj.r.clear()
+            obj.delete()
+            return HttpResponse('Done')
+        elif method == 'edit':
+            id_list = []
+            models.Course.objects.filter(id=c_id).update(c_name=course_name)
+            obj = models.Course.objects.filter(id=c_id).first()
+            for i in student:
+                temp = models.User.objects.filter(name=i).first().id
+                id_list.append(temp)
+            obj.r.set(id_list)
+            return HttpResponse('Done')
+        elif method == 'add':
+            id_list = []
+            obj = models.Course.objects.create(c_name=course_name)
+            for i in student:
+                temp = models.User.objects.filter(name=i).first().id
+                id_list.append(temp)
+            obj.r.add(*id_list)  # 注意传列表的方式
+            return HttpResponse('Done')
+
+
+# Django 模版 母版
+def block(request, **kwargs):
+    if request.method == 'GET':
+        page = kwargs.get('page', None)
+        url = 'block' + str(page) + '.html'
+    return render(request, url)
+
+
+# simple tag
+def simple_tag(request):
+    if request.method == 'GET':
+        name = 'Name'
+        return render(request, 'simple_tag.html', {'name': name})
+
+
+# 分页
+def page(request, **kwargs):
+    from django.utils.safestring import mark_safe
+    data_list = []
+    for i in range(103):
+        data_list.append(i)
+    # 获取全部数据完成
+    # 开始数据分页
+    current_page = kwargs.get('page', 1)
+    current_page = int(current_page)
+    start = (current_page - 1) * 10
+    end = current_page * 10
+    data = data_list[start:end]
+    # 数据分页完成
+    # 开始生成页码
+    page_list = []
+    total = len(data_list)
+    page_num, rest = divmod(total, 10)
+    if rest:
+        page_num += 1
+    for i in range(1, page_num + 1):
+        if i == current_page:
+            temp = '<a class= "page active" href="/page-%d.html">%d</a>' % (i, i)
+        else:
+            temp = '<a class= "page" href="/page-%d.html">%d</a>' % (i, i)
+        page_list.append(temp)
+    page_str = mark_safe(page_list)
+    return render(request, 'page.html', {'data': data, 'page_list': page_str})
 
 
 # 获取数据库数据方法
@@ -81,7 +150,7 @@ def dict_in_table(request):
     print(v25)
     print(v3)
     print(v35)
-    return HttpResponse('Done')
+    return HttpResponse('Print Done')
 
 
 # 数据库添加数据

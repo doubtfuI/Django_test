@@ -10,4 +10,8 @@ urlpatterns = [
     re_path(r'^m2m.html$', views.m2m),
     re_path(r'^option.html$', views.option),
     re_path(r'^dict_in_table.html$', views.dict_in_table),
+
+    re_path(r'^block-(?P<page>\d+).html$', views.block),
+    re_path(r'^simple_tag.html$', views.simple_tag),
+    re_path(r'^page-(?P<page>\d+).html$', views.page),
 ]

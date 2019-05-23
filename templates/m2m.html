@@ -17,11 +17,11 @@
         </thead>
         <tbody>
         {% for item in choose_list %}
-            <tr>
+            <tr c_id="{{ item.id }}">
                 <td>{{ item.c_name }}</td>
                 <td>
                     {% for i in item.r.all %}
-                        {{ i.name }}
+                        <span>{{ i.name }}</span>
                     {% endfor %}
                 </td>
                 <td><a class="del_modal_trigger del_content">del</a>|<a class="modal_trigger edit_content">edit</a></td>
@@ -37,12 +37,9 @@
 <div class="hide modal">
     <form id="add_edit_form" action="m2m.html" method="post">
         <p><a class="danger">{{ err_msg }}</a></p>
-        <p>course:
-            <select id="course">
-                {% for item in course_list %}
-                    <option value="{{ item.c_name }}">{{ item.c_name }}</option>
-                {% endfor %}
-            </select>
+        <p>
+            course name:
+            <input type="text" name="course" id="course">
         </p>
         <p>student:
             <select id="student" multiple>
@@ -51,7 +48,7 @@
                 {% endfor %}
             </select>
         </p>
-        <input type="text" name="id" id="u_id" class="hide">
+        <input type="text" name="id" id="c_id" class="hide">
         <input type="text" name="method" id="submit_method" class="hide">
         <p><input id="ajax_submit" type="button" value="ajax_submit"></p>
         <p><input class="modal_hider" type="button" value="cancel"></p>
