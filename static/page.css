@@ -1,0 +1,10 @@
+.page {
+    margin: 5px;
+    padding: 3px;
+    color: white;
+    background-color: deepskyblue;
+}
+
+.page.active {
+    background-color: darkcyan;
+}

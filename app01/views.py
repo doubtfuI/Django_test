@@ -11,6 +11,9 @@ URL = {'index': 'index.html',
        'block': 'block-1.html',
        'simple tag': 'simple_tag.html',
        'page': 'page-1.html',
+
+       'app01-m-app': 'app01-m/1',
+       'app01-n-app': 'app01-n/1'
        }
 
 
@@ -18,7 +21,7 @@ def index(request):
     return render(request, 'index.html', {'url': URL})
 
 
-# ajax基础使用
+# ajax基础
 def ajax1(request):
     user = models.User.objects.all().values('id', 'name', 'age', 'gender', 'school__s_name')
     school = models.School.objects.all().values('id', 's_name')
@@ -105,32 +108,24 @@ def simple_tag(request):
 
 # 分页
 def page(request, **kwargs):
-    from django.utils.safestring import mark_safe
-    data_list = []
-    for i in range(103):
-        data_list.append(i)
-    # 获取全部数据完成
-    # 开始数据分页
-    current_page = kwargs.get('page', 1)
-    current_page = int(current_page)
-    start = (current_page - 1) * 10
-    end = current_page * 10
-    data = data_list[start:end]
-    # 数据分页完成
-    # 开始生成页码
-    page_list = []
-    total = len(data_list)
-    page_num, rest = divmod(total, 10)
-    if rest:
-        page_num += 1
-    for i in range(1, page_num + 1):
-        if i == current_page:
-            temp = '<a class= "page active" href="/page-%d.html">%d</a>' % (i, i)
-        else:
-            temp = '<a class= "page" href="/page-%d.html">%d</a>' % (i, i)
-        page_list.append(temp)
-    page_str = mark_safe(page_list)
-    return render(request, 'page.html', {'data': data, 'page_list': page_str})
+    from utils import paginations
+    print(request.environ)
+    if request.method == 'GET':
+        # 生成数据
+        data_list = []
+        for i in range(1035):
+            data_list.append(i)
+        total_data = len(data_list)  # 总数据
+        # 获取当前页
+        current_page = kwargs.get('page', 1)
+        current_page = int(current_page)
+        # 分页
+        page_obj = paginations.Page(current_page, total_data, 'page')
+        if current_page > page_obj.total_page_num:
+            return HttpResponse('Page not found')
+        page_str = page_obj.page_str
+        data = data_list[page_obj.start_data: page_obj.end_data]
+        return render(request, 'page.html', {'data': data, 'page_list': page_str})
 
 
 # 获取数据库数据方法
