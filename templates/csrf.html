@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>csrf</title>
+</head>
+<body>
+<form action="/csrf.html" method="post">
+    {% csrf_token %}
+    <input type="text" name="username" placeholder="username">
+    <input type="submit" value="form submit">
+</form>
+<form>
+    <input type="text" name="username" id="a_username1" placeholder="username">
+    <input type="submit" id="a_submit1" value="ajax submit1">
+</form>
+<form>
+    <input type="text" name="username" id="a_username2" placeholder="username">
+    <input type="submit" id="a_submit2" value="ajax submit2">
+</form>
+<script src="/static/jQuery3.4.1.js"></script>
+<script src="/static/jquery.cookie.js"></script>
+<script src="/static/csrf.js"></script>
+</body>
+</html>

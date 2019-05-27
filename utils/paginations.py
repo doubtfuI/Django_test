@@ -33,8 +33,8 @@ class Page(object):
         start_page = self.current_page - (self.page_num - 1) / 2
         end_page = self.current_page + (self.page_num - 1) / 2 + 1
         first_page = '<a class= "page" href="/%s-%d.html">%s</a><a>...</a>' % (self.url, 1, 1)
-        last_page = '<a>...</a><a class= "page" href="/%s-%d.html">%s</a>' % (
-        self.url, self.total_page_num, self.total_page_num)
+        last_page = '<a>...</a><a class= "page" href="/%s-%d.html">%s</a>' % (self.url, self.total_page_num,
+                                                                              self.total_page_num)
         if start_page <= 1:
             start_page = 1
             end_page = 1 + self.page_num

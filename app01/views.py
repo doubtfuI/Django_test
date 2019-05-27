@@ -3,6 +3,7 @@ from app01 import models
 
 
 URL = {'index': 'index.html',
+       'login': 'login.html',
        'ajax1': 'ajax1.html',
        'm2m': 'm2m.html',
        'option': 'option.html',
@@ -13,8 +14,34 @@ URL = {'index': 'index.html',
        'page': 'page-1.html',
 
        'app01-m-app': 'app01-m/1',
-       'app01-n-app': 'app01-n/1'
+       'app01-n-app': 'app01-n/1',
+       'session': 'session.html',
+       'csrf': 'csrf.html',
        }
+
+
+# 验证是否登录的装饰器，在需要应用的函数前加：@auth
+def auth(func):
+    def inner(request, *args, **kwargs):
+        username = request.COOKIES.get('username')
+        if not username:
+            return redirect('/index.html')
+        res = func(request, *args, **kwargs)
+        return res
+
+    return inner
+
+
+def login(request):
+    if request.method == 'GET':
+        return render(request, 'login.html')
+    if request.method == 'POST':
+        user = request.POST.get('username', None)
+        print('sth post')
+        print(user)
+        request.session['username'] = user
+        request.session['is_login'] = True
+    return redirect('session.html')
 
 
 def index(request):
@@ -22,6 +49,7 @@ def index(request):
 
 
 # ajax基础
+# @auth
 def ajax1(request):
     user = models.User.objects.all().values('id', 'name', 'age', 'gender', 'school__s_name')
     school = models.School.objects.all().values('id', 's_name')
@@ -61,6 +89,7 @@ def m2m(request):
     if request.method == 'GET':
         choose_list = models.Course.objects.all()
         student_list = models.User.objects.all()
+        int('qwe')  # error test
         return render(request, 'm2m.html', {'choose_list': choose_list, 'student_list': student_list})
     elif request.method == 'POST':
         c_id = request.POST.get('c_id', None)
@@ -113,7 +142,7 @@ def page(request, **kwargs):
     if request.method == 'GET':
         # 生成数据
         data_list = []
-        for i in range(1035):
+        for i in range(1024):
             data_list.append(i)
         total_data = len(data_list)  # 总数据
         # 获取当前页
@@ -126,6 +155,26 @@ def page(request, **kwargs):
         page_str = page_obj.page_str
         data = data_list[page_obj.start_data: page_obj.end_data]
         return render(request, 'page.html', {'data': data, 'page_list': page_str})
+
+
+# session
+def session(request):
+    if request.session.get('is_login'):
+        # request.session[''] 如果不存在key会报错
+        return HttpResponse(request.session['username'])
+    else:
+        return redirect('/login.html')
+
+
+# csrf
+def csrf(request):
+    if request.method == 'GET':
+        return render(request, 'csrf.html')
+    elif request.method == 'POST':
+        print('sth post')
+        username = request.POST.get('username', None)
+        print(username)
+        return HttpResponse(username)
 
 
 # 获取数据库数据方法
